@@ -1,0 +1,167 @@
+<!-- I left comments in the code to help other programmers. I always appreciate it when others do this. -->
+
+<!doctype html>
+<html>
+    <head>
+        <title>Get Motivated Today!</title>
+        <script src="https://not-an-aardvark.github.io/snoowrap/snoowrap-v1.min.js"></script>  <!-- This is the Reddit API Wrapper I used. It is pure Javascript and runs in the browser, meaning no calls to a local server are necessary. -->
+        <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>
+        <style>
+            
+            body {
+                color: grey;
+                font-family: Calibri, sans-serif;
+                background-image: url(http://static.tumblr.com/ybdgkw4/ffzkxsss6/bg-400-paper2.jpg);  /* This is the same background as www.fuckinghomepage.com for the curious */
+            }
+            
+            h1 {
+                text-align: center;
+                margin: auto;
+                font-size: 55px;
+                width: 96%;
+            }
+            
+            .content {
+                display: block;
+                margin: auto;
+                position: relative;
+                top: 25px;
+            }
+            
+            .footer {
+                position: fixed;
+                bottom: 20px;
+                width: 20%;
+                font-size: 20px;
+            }
+            
+            #image, #imgur-album {
+                border-radius: 2%;
+                box-shadow: 0 0 40px dimgrey;
+                width: 500px;
+            }
+            
+            #text {
+                width: 650px;
+                font-size: 24px;
+                line-height: 1.5;
+            }
+            
+            #info {
+                text-align: left;
+                width: 280px;
+                left: 20px;
+            }
+            
+            #link {
+                color: grey;
+            }
+            
+            #name {
+                text-align: right;
+                right: 20px;
+            }
+            
+            #error {
+                text-align: center;
+                font-size: 20px;
+            }
+            
+            #box {
+                height: 1px;
+            }
+            
+        </style>
+    </head>
+
+    <body onload="getPost()">
+        
+        <p id="error"></p>
+        
+        <h1 id="title"></h1>
+    
+        <img id="image" class="content">
+        
+        <p id="text" class="content"></p>
+        
+        <p id="box"></p>
+        
+        <div id="name" class="footer">Made with <span id="heart">&hearts;</span> by Noah Luddy</div>
+        
+        <div id="info" class="footer">This is <span id="err1">the current</span> top post <span id="err2"></span> on <a href="https://www.reddit.com/r/GetMotivated" id="link">www.reddit.com/r/GetMotivated</a></div>
+        
+        <script type="text/javascript">
+            
+            function getPost() {
+                var r = new window.snoowrap({
+                    userAgent: 'GM',
+                    clientId: 'wX8uBrdsSoyhAw',
+                    clientSecret: 'TjjF1UEas2AVtA3p2Vas4W4yuOU',
+                    refreshToken: '63804802-CztDrjIBdfYBZ953ocBLK9NF510'
+                });
+
+                var submissions = r.getSubreddit('getmotivated').getHot({limit:10})
+                    .catch(function(error) {  // If something goes wrong connecting to reddit
+                        console.log(error);
+                        
+                        document.getElementById('error').innerHTML = 'There was a problem connecting to Reddit, so here\'s a top post of all time';
+                        document.getElementById('title').innerHTML = 'Louis C.K. gives great life advice.';
+                        document.getElementById('image').src = 'http://i.imgur.com/YG38LBt.jpg';
+                        document.getElementById('err1').innerHTML = 'a';
+                        document.getElementById('err2').innerHTML = 'of all time'
+                    });
+
+                var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != null && post.score > 50)[0];
+                top_post.then(console.log);  // For debugging purposes and so users can see what the code of the submission looks like
+
+                var top_title = top_post.title;
+                top_title.then(function(result) {
+                    title = fixTitle(result);
+                    document.getElementById('title').innerHTML = title;
+                });
+
+                top_post.link_flair_css_class.then(function(result) {
+
+                    switch (result) {
+
+                        case 'image':
+
+                            var top_url = top_post.url;
+                            top_url.then(function(result) {
+                                result = fixImgurLink(result);
+                                document.getElementById('image').src = result;
+                            });
+                            break;
+
+                        default:
+
+                            var top_text = top_post.selftext_html;  // Calling selftext_html rather than just selftext preserves the original style (paragraphs, number lists, etc...)
+                            top_text.then(function(result) {
+                                if (result != '' && result != '.') {  
+                                    document.getElementById('text').innerHTML = result;
+                                } else {  // Self Text is empty, so we'll move the title more to the center of the page
+                                    document.getElementById('title').style.marginTop = '120px';
+                                }
+                            });
+                            break;
+                    }
+                });
+            }
+            
+            function fixTitle(title) {  // Gets rid of the default title tags automatically given to each post by GetMotivated. Also gets rid of anything in parentheses
+                return title.substring(title.indexOf(']')+1, title.indexOf('(') > 0 ? title.indexOf('(') : title.length);
+            }
+
+            function fixImgurLink(link) {  // We want i.imgur.com/picID
+                if (link.indexOf('imgur') === -1 || link.substring(7, 9) === 'i.') {  // If nothing is wrong
+                    return link;
+                } else if (link.indexOf('/gallery/') != -1) {  // If imgur.com/gallery/picID
+                    return 'http://imgur.com/' + link.substring(link.indexOf('y/')+2) + '.jpg';
+                } else {  // If imgur.com/picID
+                    return link + '.jpg';  // Even if the file isn't a jpg, imgur still accepts the .jpg extension to view the content. (Thanks Imgur!)
+                }
+            }
+                
+        </script>
+    </body>
+</html>
