@@ -5,7 +5,7 @@
     <head>
         <title>Get Motivated Today!</title>
         <script src="https://not-an-aardvark.github.io/snoowrap/snoowrap-v1.min.js"></script>  <!-- This is the Reddit API Wrapper I used. It is pure Javascript and runs in the browser, meaning no calls to a local server are necessary. -->
-        <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>
+        <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>  <!-- I got this image from Pixabay: https://pixabay.com/en/strong-arm-muscle-muscles-310873/ The image was labeled for free commercial use under Creative Commons CC0. Thanks Pixabay!-->
         <style>
             
             body {
@@ -112,7 +112,7 @@
                     });
 
                 var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != null && post.score > 50)[0];
-                top_post.then(console.log);  // For debugging purposes and so users can see what the code of the submission looks like
+                top_post.then(console.log);  // For debugging purposes and so users can see what the structure of the submission object looks like
 
                 var top_title = top_post.title;
                 top_title.then(function(result) {
@@ -148,8 +148,18 @@
                 });
             }
             
-            function fixTitle(title) {  // Gets rid of the default title tags automatically given to each post by GetMotivated. Also gets rid of anything in parentheses
-                return title.substring(title.indexOf(']')+1, title.indexOf('(') > 0 ? title.indexOf('(') : title.length);
+            function fixTitle(title) {  // Gets rid of the default title tags automatically given to each post by GetMotivated. Also gets rid of anything in parentheses. Also capitalizes the title if it is not already.
+                var almostFixed = title.substring(title.indexOf(']')+1, title.indexOf('(') > 0 ? title.indexOf('(') : title.length);
+                var letter = '';
+                var index;
+                if (almostFixed.substring(0, 1) == ' ') {  // If [Image] title
+                    letter = almostFixed.substring(1, 2);
+                    index = 2;
+                } else {  // If [Image]title
+                    letter = almostFixed.substring(0, 1);
+                    index = 1;
+                }
+                return letter.toUpperCase() + almostFixed.substring(index);
             }
 
             function fixImgurLink(link) {  // We want i.imgur.com/picID
@@ -162,16 +172,6 @@
                 }
             }
                 
-        </script>
-        
-        <script>
-            // Google Analytics
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-            ga('create', 'UA-86722706-1', 'auto');
-            ga('send', 'pageview');
         </script>
     </body>
 </html>
