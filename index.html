@@ -111,7 +111,7 @@
                         document.getElementById('err2').innerHTML = 'of all time'
                     });
 
-                var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != null && post.score > 50)[0];
+                var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != 'video' && post.link_flair_css_class != null && post.score > 50)[0];
                 top_post.then(console.log);  // For debugging purposes and so users can see what the structure of the submission object looks like
 
                 var top_title = top_post.title;
