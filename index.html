@@ -26,6 +26,7 @@
                 margin: auto;
                 position: relative;
                 top: 25px;
+                font-size: 24px;
             }
             
             .footer {
@@ -33,6 +34,10 @@
                 bottom: 20px;
                 width: 20%;
                 font-size: 20px;
+            }
+            
+            .link {
+                color: grey;
             }
             
             #image, #imgur-album {
@@ -43,18 +48,17 @@
             
             #text {
                 width: 650px;
-                font-size: 24px;
                 line-height: 1.5;
+            }
+            
+            #video-text {
+                text-align: center;
             }
             
             #info {
                 text-align: left;
                 width: 280px;
                 left: 20px;
-            }
-            
-            #link {
-                color: grey;
             }
             
             #name {
@@ -84,11 +88,13 @@
         
         <p id="text" class="content"></p>
         
+        <p id="video-text" class="content"><a id="video" class="link"></a></p>
+        
         <p id="box"></p>
         
         <div id="name" class="footer">Made with <span id="heart">&hearts;</span> by Noah Luddy</div>
         
-        <div id="info" class="footer">This is <span id="err1">the current</span> top post <span id="err2"></span> on <a href="https://www.reddit.com/r/GetMotivated" id="link">www.reddit.com/r/GetMotivated</a></div>
+        <div id="info" class="footer">This is <span id="err1">the current</span> top post <span id="err2"></span> on <a href="https://www.reddit.com/r/GetMotivated" class="link">www.reddit.com/r/GetMotivated</a></div>
         
         <script type="text/javascript">
             
@@ -111,7 +117,7 @@
                         document.getElementById('err2').innerHTML = 'of all time'
                     });
 
-                var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != 'video' && post.link_flair_css_class != null && post.score > 50)[0];
+                var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != null && post.score > 50)[0];
                 top_post.then(console.log);  // For debugging purposes and so users can see what the structure of the submission object looks like
 
                 var top_title = top_post.title;
@@ -126,11 +132,20 @@
 
                         case 'image':
 
-                            var top_url = top_post.url;
-                            top_url.then(function(result) {
+                            var img_url = top_post.url;
+                            img_url.then(function(result) {
                                 result = fixImgurLink(result);
                                 document.getElementById('image').src = result;
                             });
+                            break;
+                            
+                        case 'video':
+                            
+                            var vid_url = top_post.url;
+                            vid_url.then(function(result) {
+                                document.getElementById('video').href = result;
+                                document.getElementById('video').innerHTML = result;
+                            })
                             break;
 
                         default:
@@ -171,17 +186,7 @@
                     return link + '.jpg';  // Even if the file isn't a jpg, imgur still accepts the .jpg extension to view the content. (Thanks Imgur!)
                 }
             }
-        </script>
-        
-        <script>
-            // Google Analytics
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-86722706-1', 'auto');
-            ga('send', 'pageview');
+                
         </script>
     </body>
 </html>
