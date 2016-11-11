@@ -129,9 +129,7 @@
                 top_post.link_flair_css_class.then(function(result) {
 
                     switch (result) {
-
                         case 'image':
-
                             var img_url = top_post.url;
                             img_url.then(function(result) {
                                 result = fixImgurLink(result);
@@ -140,7 +138,6 @@
                             break;
                             
                         case 'video':
-                            
                             var vid_url = top_post.url;
                             vid_url.then(function(result) {
                                 document.getElementById('video').href = result;
@@ -149,7 +146,6 @@
                             break;
 
                         default:
-
                             var top_text = top_post.selftext_html;  // Calling selftext_html rather than just selftext preserves the original style (paragraphs, number lists, etc...)
                             top_text.then(function(result) {
                                 if (result != '' && result != '.') {  
