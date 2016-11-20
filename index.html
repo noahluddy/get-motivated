@@ -105,58 +105,64 @@
                     clientSecret: 'TjjF1UEas2AVtA3p2Vas4W4yuOU',
                     refreshToken: '63804802-CztDrjIBdfYBZ953ocBLK9NF510'
                 });
-
+                
+                var go = true;
+                
                 var submissions = r.getSubreddit('getmotivated').getHot({limit:10})
-                    .catch(function(error) {  // If something goes wrong connecting to reddit
-                        console.log(error);
-                        
-                        document.getElementById('error').innerHTML = 'There was a problem connecting to Reddit, so here\'s a top post of all time';
-                        document.getElementById('title').innerHTML = 'Louis C.K. gives great life advice.';
-                        document.getElementById('image').src = 'http://i.imgur.com/YG38LBt.jpg';
-                        document.getElementById('err1').innerHTML = 'a';
-                        document.getElementById('err2').innerHTML = 'of all time'
+                    .catch(function(err) {  // If something goes wrong connecting to reddit
+                        console.log(err);
+                        error();
+                        go = false;
                     });
-
+                
                 var top_post = submissions.filter(post => post.link_flair_css_class != 'discussion' && post.link_flair_css_class != 'tool' && post.link_flair_css_class != null && post.score > 50)[0];
-                top_post.then(console.log);  // For debugging purposes and so users can see what the structure of the submission object looks like
-
-                var top_title = top_post.title;
-                top_title.then(function(result) {
-                    title = fixTitle(result);
-                    document.getElementById('title').innerHTML = title;
-                });
-
-                top_post.link_flair_css_class.then(function(result) {
-
-                    switch (result) {
-                        case 'image':
-                            var img_url = top_post.url;
-                            img_url.then(function(result) {
-                                result = fixImgurLink(result);
-                                document.getElementById('image').src = result;
-                            });
-                            break;
-                            
-                        case 'video':
-                            var vid_url = top_post.url;
-                            vid_url.then(function(result) {
-                                document.getElementById('video').href = result;
-                                document.getElementById('video').innerHTML = result;
-                            })
-                            break;
-
-                        default:
-                            var top_text = top_post.selftext_html;  // Calling selftext_html rather than just selftext preserves the original style (paragraphs, number lists, etc...)
-                            top_text.then(function(result) {
-                                if (result != '' && result != '.') {  
-                                    document.getElementById('text').innerHTML = result;
-                                } else {  // Self Text is empty, so we'll move the title more to the center of the page
-                                    document.getElementById('title').style.marginTop = '120px';
-                                }
-                            });
-                            break;
+                
+                top_post.then(function(result) {  // For debugging purposes and so users can see what the structure of the submission object looks like
+                    console.log(result);
+                    if (result == undefined) {
+                        error();
+                        go = false;
                     }
                 });
+                
+                if (go) {
+                    var top_title = top_post.title;
+                    top_title.then(function(result) {
+                    title = fixTitle(result);
+                    document.getElementById('title').innerHTML = title;
+                    });
+                
+                    top_post.link_flair_css_class.then(function(result) {
+                        switch (result) {
+                            case 'image':
+                                var img_url = top_post.url;
+                                img_url.then(function(result) {
+                                    result = fixImgurLink(result);
+                                    document.getElementById('image').src = result;
+                                });
+                                break;
+
+                            case 'video':
+                                var vid_url = top_post.url;
+                                vid_url.then(function(result) {
+                                    document.getElementById('video').href = result;
+                                    document.getElementById('video').innerHTML = result;
+                                })
+                                break;
+
+                            default:
+                                var top_text = top_post.selftext_html;  // Calling selftext_html rather than just selftext preserves the original style (paragraphs, number lists, etc...)
+                                top_text.then(function(result) {
+                                    if (result != '' && result != '.') {  
+                                        document.getElementById('text').innerHTML = result;
+                                    } else {  // Self Text is empty, so we'll move the title more to the center of the page
+                                        document.getElementById('title').style.marginTop = '120px';
+                                    }
+                                });
+                                break;
+                        }
+                    });
+                }
             }
             
             function fixTitle(title) {  // Gets rid of the default title tags automatically given to each post by GetMotivated. Also gets rid of anything in parentheses. Also capitalizes the title if it is not already.
@@ -172,7 +178,7 @@
                 }
                 return letter.toUpperCase() + almostFixed.substring(index);
             }
-
+            
             function fixImgurLink(link) {  // We want i.imgur.com/picID
                 if (link.indexOf('imgur') === -1 || link.substring(7, 9) === 'i.') {  // If nothing is wrong
                     return link;
@@ -181,6 +187,14 @@
                 } else {  // If imgur.com/picID
                     return link + '.jpg';  // Even if the file isn't a jpg, imgur still accepts the .jpg extension to view the content. (Thanks Imgur!)
                 }
+            }
+            
+            function error() {
+                document.getElementById('error').innerHTML = 'There was a problem connecting to Reddit, so here\'s a top post of all time';
+                document.getElementById('title').innerHTML = 'Louis C.K. gives great life advice.';
+                document.getElementById('image').src = 'http://i.imgur.com/YG38LBt.jpg';
+                document.getElementById('err1').innerHTML = 'a';
+                document.getElementById('err2').innerHTML = 'of all time';
             }
                 
         </script>
@@ -191,7 +205,6 @@
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
             m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
             })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
             ga('create', 'UA-86722706-1', 'auto');
             ga('send', 'pageview');
         </script>
