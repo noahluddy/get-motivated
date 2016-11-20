@@ -7,7 +7,6 @@
         <script src="https://not-an-aardvark.github.io/snoowrap/snoowrap-v1.min.js"></script>  <!-- This is the Reddit API Wrapper I used. It is pure Javascript and runs in the browser, meaning no calls to a local server are necessary. -->
         <link rel='shortcut icon' href='favicon.ico' type='image/x-icon'/>  <!-- I got this image from Pixabay: https://pixabay.com/en/strong-arm-muscle-muscles-310873/ The image was labeled for free commercial use under Creative Commons CC0. Thanks Pixabay!-->
         <style>
-            
             body {
                 color: grey;
                 font-family: Calibri, sans-serif;
@@ -74,12 +73,10 @@
             #box {
                 height: 1px;
             }
-            
         </style>
     </head>
 
     <body onload="getPost()">
-        
         <p id="error"></p>
         
         <h1 id="title"></h1>
@@ -97,7 +94,6 @@
         <div id="info" class="footer">This is <span id="err1">the current</span> top post <span id="err2"></span> on <a href="https://www.reddit.com/r/GetMotivated" class="link">www.reddit.com/r/GetMotivated</a></div>
         
         <script type="text/javascript">
-            
             function getPost() {
                 var r = new window.snoowrap({
                     userAgent: 'GM',
@@ -195,8 +191,7 @@
                 document.getElementById('image').src = 'http://i.imgur.com/YG38LBt.jpg';
                 document.getElementById('err1').innerHTML = 'a';
                 document.getElementById('err2').innerHTML = 'of all time';
-            }
-                
+            } 
         </script>
         
         <script>
