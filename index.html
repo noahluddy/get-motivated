@@ -85,7 +85,7 @@
         
         <p id="text" class="content"></p>
         
-        <p id="video-text" class="content"><a id="video" class="link"></a></p>
+        <p id="video-text" class="content"><a id="video-article" class="link"></a></p>
         
         <p id="box"></p>
         
@@ -139,10 +139,11 @@
                                 break;
 
                             case 'video':
-                                var vid_url = top_post.url;
-                                vid_url.then(function(result) {
-                                    document.getElementById('video').href = result;
-                                    document.getElementById('video').innerHTML = result;
+                            case 'article:
+                                var content_url = top_post.url;
+                                content_url.then(function(result) {
+                                    document.getElementById('video-article').href = result;
+                                    document.getElementById('video-article').innerHTML = result;
                                 })
                                 break;
 
